@@ -1,0 +1,128 @@
+version: "3"
+services:
+    rabbitmq:
+        hostname: rabbitmq-server
+        image: rabbitmq:latest
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+
+    redis:
+        hostname: redis-server
+        image: redis:latest
+        ports:
+            - "6379:6379"
+
+    web:
+        build: .
+        command: gunicorn -b 0.0.0.0:5880 -w 4 --reload wsgi:app --chdir /code/stalks/
+        environment:
+            PYTHONUNBUFFERED: "true"
+        ports:
+            - "5555:5555"
+        links:
+            - rabbitmq
+            - redis
+        healthcheck:
+            test: "curl -f http://0.0.0.0:5880/index || false"
+            interval: 60s
+            timeout: 10s
+            retries: 3
+    
+    celery_beat:
+        build:
+            context: .
+            dockerfile: Dockerfile_celery
+        environment:
+            - BF_USER=admin
+            - BF_PWD=St@rW@rs1
+        command: celery -A stalks.tasks beat -l DEBUG
+        volumes:
+            - .:/app
+        links:
+            - rabbitmq
+            - redis
+        depends_on:
+            - rabbitmq
+            - redis
+    
+    locations_worker:
+        build:
+            context: .
+            dockerfile: Dockerfile_celery
+        environment:
+            - BF_USER=admin
+            - BF_PWD=St@rW@rs1
+        command: celery -A stalks.tasks worker -l DEBUG -n worker@%h -Q locations -c 4
+        volumes:
+            - .:/app
+        links:
+            - rabbitmq
+            - redis
+        depends_on:
+            - rabbitmq
+            - redis
+    
+    devices_worker:
+        build:
+            context: .
+            dockerfile: Dockerfile_celery
+        environment:
+            - BF_USER=admin
+            - BF_PWD=St@rW@rs1
+        command: celery -A stalks.tasks worker -l DEBUG -n worker@%h -Q devices -c 4
+        volumes:
+            - .:/app
+        links:
+            - rabbitmq
+            - redis
+        depends_on:
+            - rabbitmq
+            - redis
+    
+    messages_worker:
+        build:
+            context: .
+            dockerfile: Dockerfile_celery
+        environment:
+            - BF_USER=admin
+            - BF_PWD=St@rW@rs1
+        command: celery -A stalks.tasks worker -l DEBUG -n worker@%h -Q messages -c 2
+        volumes:
+            - .:/app
+        links:
+            - rabbitmq
+            - redis
+        depends_on:
+            - rabbitmq
+            - redis
+
+    flower:
+        build:
+            context: .
+            dockerfile: Dockerfile_flower
+        environment:
+            - BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+            - CELERY_RESULT_BACKEND=redis://redis:6379/0        
+        command: flower -A stalks.tasks --address=0.0.0.0 --port=5000
+        volumes:
+          - .:/app
+        ports:
+          - "5000:5000"
+        links:
+          - database
+          - rabbitmq
+        healthcheck:
+            test: "curl -f http://0.0.0.0:5000 || false"
+            interval: 60s
+            timeout: 10s
+            retries: 3
+
+    database:
+        hostname: mongodb-server
+        image: mongo:latest
+        ports:
+            - "27017:27107"

@@ -1,0 +1,9 @@
+FROM python:3.6-alpine
+LABEL maintainer="Craig Derington <cderington@championsg.com>"
+RUN apk update && apk upgrade
+RUN apk add --no-cache --virtual build-deps build-base gcc python3-dev openssl-dev \
+    libressl-dev libffi-dev screen curl
+WORKDIR /code
+COPY . /code
+RUN pip3 install --no-cache-dir -r requirements.txt
+CMD ["celery", "-A", "stalks.tasks", "worker", "-l", "DEBUG", "-n", "worker@%h", "-c", "4"]
