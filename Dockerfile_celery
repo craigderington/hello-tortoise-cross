@@ -6,4 +6,4 @@ RUN apk add --no-cache --virtual build-deps build-base gcc python3-dev openssl-d
 WORKDIR /code
 COPY . /code
 RUN pip3 install --no-cache-dir -r requirements.txt
-CMD ["celery", "-A", "stalks.celery", "worker", "-l", "INFO", "-n", "worker@%h", "-c", "4"]
+CMD ["celery", "-A", "stalks.celery", "worker", "-l", "INFO", "-n", "worker0@%h", "-c", "4"]

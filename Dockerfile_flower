@@ -5,6 +5,6 @@ RUN apk add --no-cache --virtual build-deps build-base gcc python3-dev openssl-d
     libressl-dev libffi-dev screen curl
 WORKDIR /code
 COPY . /code
-EXPOSE 5000
 RUN pip3 install --no-cache-dir -r requirements.txt
+EXPOSE 5000
 CMD ["flower", "-A", "stalks.celery", "--address=0.0.0.0", "--port=5000"]

@@ -6,9 +6,7 @@ from .tasks import get_message, get_locations, log
 from .config import config
 
 # set up the celery app
-app = Celery(__name__, 
-             broker_url=os.environ.get("CELERY_BROKER_URL"), 
-             result_backend=os.environ.get("CELERY_RESULT_BACKEND"),
+app = Celery(__name__,
              include=["stalks.tasks"])
 
 # update the celery app config

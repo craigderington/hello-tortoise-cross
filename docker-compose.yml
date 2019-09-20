@@ -37,8 +37,6 @@ services:
             context: .
             dockerfile: Dockerfile_celery
         environment:
-            - BF_USER=admin
-            - BF_PWD=St@rW@rs1
             - CELERY_BROKER_URL=pyamqp://rabbitmq:5672/
             - CELERY_RESULT_BACKEND=redis://redis:6379/0
         command: celery -A stalks.celery beat -l DEBUG
@@ -56,8 +54,6 @@ services:
             context: .
             dockerfile: Dockerfile_celery
         environment:
-            - BF_USER=admin
-            - BF_PWD=St@rW@rs1
             - CELERY_BROKER_URL=pyamqp://rabbitmq:5672/
             - CELERY_RESULT_BACKEND=redis://redis:6379/0
         command: celery -A stalks.celery worker -l INFO -n worker@%h -Q locations -c 4
@@ -75,8 +71,6 @@ services:
             context: .
             dockerfile: Dockerfile_celery
         environment:
-            - BF_USER=admin
-            - BF_PWD=St@rW@rs1
             - CELERY_BROKER_URL=pyamqp://rabbitmq:5672/
             - CELERY_RESULT_BACKEND=redis://redis:6379/0
         command: celery -A stalks.celery worker -l INFO -n worker@%h -Q devices -c 4
@@ -94,8 +88,6 @@ services:
             context: .
             dockerfile: Dockerfile_celery
         environment:
-            - BF_USER=admin
-            - BF_PWD=St@rW@rs1
             - CELERY_BROKER_URL=pyamqp://rabbitmq:5672/
             - CELERY_RESULT_BACKEND=redis://redis:6379/0
         command: celery -A stalks.celery worker -l WARNING -n worker@%h -Q messages -c 2
@@ -113,8 +105,7 @@ services:
             context: .
             dockerfile: Dockerfile_flower
         environment:
-            - BROKER_URL=pyamqp://guest:guest@rabbitmq:5672/
-            - CELERY_RESULT_BACKEND=redis://redis:6379/0        
+            - broker=pyamqp://rabbitmq:5672/     
         command: flower -A stalks.celery --address=0.0.0.0 --port=5000
         volumes:
           - .:/app
