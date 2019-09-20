@@ -7,12 +7,12 @@ from .config import config
 
 # set up the celery app
 app = Celery(__name__, 
-             broker_url="0.0.0.0:5672/", 
-             result_backend="rpc://",
+             broker_url=os.environ.get("CELERY_BROKER_URL"), 
+             result_backend=os.environ.get("CELERY_RESULT_BACKEND"),
              include=["stalks.tasks"])
 
 # update the celery app config
-app.config_from_object(config["development"])
+app.config_from_object(config["docker-compose"])
 
 # setup the periodic tasks
 @app.on_after_configure.connect

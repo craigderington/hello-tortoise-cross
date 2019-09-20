@@ -10,7 +10,7 @@ from database import db
 
 # create flask app
 app = Flask(__name__, static_folder="static", template_folder="templates")
-app.config.from_object("config.DevelopmentConfig")
+app.config.from_object("config.DockerComposeConfig")
 app.config["SQLALCHEMY_DATABASE_URI"] = app.config["SQLALCHEMY_DATABASE_URI"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]
 app.config.update()

@@ -31,10 +31,6 @@ class Config(object):
     BF_USERNAME = os.environ.get("BF_USER")
     BF_PASSWORD = os.environ.get("BF_PWD")
 
-    # base url
-    SNOW_BASE_URL = "https://championsolutionsgroupdemo2.service-now.com/api/x_328385_restapi/bbi/"
-    API_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-
 
 class DevelopmentConfig(Config):
     DEBUG = True

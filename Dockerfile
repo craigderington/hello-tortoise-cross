@@ -6,5 +6,5 @@ RUN apk add --no-cache --virtual build-deps build-base gcc python3-dev openssl-d
 WORKDIR /code
 COPY . /code
 RUN pip3 install --no-cache-dir -r requirements.txt
-EXPOSE 5555
+EXPOSE 5880
 CMD ["gunicorn", "-b", "0.0.0.0:5880", "-w", "4", "wsgi:app", "--chdir", "/code/stalks/"]
