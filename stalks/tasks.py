@@ -22,9 +22,9 @@ messages = [line.rstrip("\n") for line in open(filename + "/stalks/messages1.txt
 
 # base objects
 
-SNOW_BASE_URL = "https://championsolutionsgroupdemo2.service-now.com/api/x_328385_restapi/bbi/"
+SNOW_BASE_URL = "dev73949.service-now.com/api/x_328385_restapi/bbi/"
 API_METHOD = "GET"
-auth = HTTPBasicAuth("admin", "St@rW@rs1")
+auth = HTTPBasicAuth("", "")
 hdrs = {"Content-Type": "application/json", "Accept": "application/json"}
 
 
